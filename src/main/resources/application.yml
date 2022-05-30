@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    password: ss
+    url: jdbc:h2:mem:testdb
+    username: ss
+    
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    defer-datasource-initialization: true
+    
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: rchakrabarti750@gmail.com
+    password: rchakrabarti123
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+            
+    

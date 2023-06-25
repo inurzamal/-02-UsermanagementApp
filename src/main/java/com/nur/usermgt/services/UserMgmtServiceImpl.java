@@ -1,8 +1,9 @@
 package com.nur.usermgt.services;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
@@ -33,19 +34,19 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 	Logger logger = LoggerFactory.getLogger(UserMgmtServiceImpl.class);
 
 	@Autowired
-	private UserDtlsRepository userRepo;
+	UserDtlsRepository userRepo;
 
 	@Autowired
-	private CountryRepository countryRepo;
+	CountryRepository countryRepo;
 
 	@Autowired
-	private StateRepository stateRepo;
+	StateRepository stateRepo;
 
 	@Autowired
-	private CityRepository cityRepo;
+	CityRepository cityRepo;
 
 	@Autowired
-	private EmailUtils emailUtils;
+	EmailUtils emailUtils;
 
 	@Override
 	public String login(LoginForm loginForm) {
@@ -198,48 +199,69 @@ public class UserMgmtServiceImpl implements UserMgmtService {
         return sb.toString();
     }
 
-	private String readMailBodyContent(String fileName, UserDtlsEntity entity) {
+//	private String readMailBodyContent(String fileName, UserDtlsEntity entity) {
+//
+//		String mailBody = null;
+//
+//		StringBuilder sb = new StringBuilder();
+//		BufferedReader br = null;
+//		String line = null;
+//
+//		try {
+//
+//			br = new BufferedReader(new FileReader(fileName));
+//			line = br.readLine(); // reading first line data
+//
+//			while (line != null) {
+//				sb.append(line); // appending line data to buffer obj
+//				line = br.readLine(); // reading next line data
+//			}
+//
+//			mailBody = sb.toString();
+//
+//			mailBody = mailBody.replace("{FNAME}", entity.getFname());
+//			mailBody = mailBody.replace("{LNAME}", entity.getLname());
+//			mailBody = mailBody.replace("{TEMP-PWD}", entity.getPassword());
+//			mailBody = mailBody.replace("{EMAIL}", entity.getEmail());
+//			mailBody = mailBody.replace("{PWD}", entity.getPassword());
+//
+//		} catch (Exception e) {
+//			logger.error(e.getMessage(), e);
+//		}
+//
+//		finally {
+//			// this block will be executed in every case, success or caught exception
+//			if (br != null) {
+//				// again, a resource is involved, so try-catch another time
+//				try {
+//					br.close();
+//				} catch (IOException e) {
+//					logger.error(e.getMessage(), e);
+//				}
+//			}
+//		}
+//
+//		return mailBody;
+//	}
 
+	private String readMailBodyContent(String fileName, UserDtlsEntity entity) {
 		String mailBody = null;
 
-		StringBuilder sb = new StringBuilder();
-		BufferedReader br = null;
-		String line = null;
-
 		try {
+			Path filePath = Paths.get(fileName);
+			mailBody = Files.readString(filePath);
 
-			br = new BufferedReader(new FileReader(fileName));
-			line = br.readLine(); // reading first line data
+			mailBody = mailBody.replace("{FNAME}", entity.getFname())
+					.replace("{LNAME}", entity.getLname())
+					.replace("{TEMP-PWD}", entity.getPassword())
+					.replace("{EMAIL}", entity.getEmail())
+					.replace("{PWD}", entity.getPassword());
 
-			while (line != null) {
-				sb.append(line); // appending line data to buffer obj
-				line = br.readLine(); // reading next line data
-			}
-
-			mailBody = sb.toString();
-
-			mailBody = mailBody.replace("{FNAME}", entity.getFname());
-			mailBody = mailBody.replace("{LNAME}", entity.getLname());
-			mailBody = mailBody.replace("{TEMP-PWD}", entity.getPassword());
-			mailBody = mailBody.replace("{EMAIL}", entity.getEmail());
-			mailBody = mailBody.replace("{PWD}", entity.getPassword());
-
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-		}
-
-		finally {
-			// this block will be executed in every case, success or caught exception
-			if (br != null) {
-				// again, a resource is involved, so try-catch another time
-				try {
-					br.close();
-				} catch (IOException e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
+		} catch (IOException e) {
+			logger.error("Error reading mail body content from file: " + e.getMessage(), e);
 		}
 
 		return mailBody;
 	}
+
 }

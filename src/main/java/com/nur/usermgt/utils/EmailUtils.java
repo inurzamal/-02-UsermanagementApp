@@ -15,7 +15,7 @@ public class EmailUtils {
 	Logger logger = LoggerFactory.getLogger(EmailUtils.class);
 
 	@Autowired
-	private JavaMailSender mailSender;
+	JavaMailSender mailSender;
 
 	public boolean sendEmail(String to, String subject, String body) {
 		boolean isSent = false;

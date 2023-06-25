@@ -31,6 +31,7 @@ import com.nur.usermgt.utils.EmailUtils;
 @Service
 public class UserMgmtServiceImpl implements UserMgmtService {
 
+	public static final int PASSWORD_LENGTH = 6;
 	Logger logger = LoggerFactory.getLogger(UserMgmtServiceImpl.class);
 
 	@Autowired
@@ -121,7 +122,7 @@ public class UserMgmtServiceImpl implements UserMgmtService {
 		UserDtlsEntity entity = new UserDtlsEntity();
 		BeanUtils.copyProperties(regForm, entity);
 		entity.setAccStatus("LOCKED");
-		entity.setPassword(generateRandomPassword(6));
+		entity.setPassword(generateRandomPassword(PASSWORD_LENGTH));
 		UserDtlsEntity savedEntity = userRepo.save(entity);
 
 		String email = regForm.getEmail();
@@ -185,7 +186,7 @@ public class UserMgmtServiceImpl implements UserMgmtService {
         final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
  
         SecureRandom random = new SecureRandom();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(len);
  
         // each iteration of the loop randomly chooses a character from the given
         // ASCII range and appends it to the `StringBuilder` instance
